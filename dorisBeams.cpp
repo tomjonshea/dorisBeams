@@ -1,13 +1,8 @@
 // Animations for the D.O.R.I.S. Burning Man art car, 2016
 
 /* TODO:
-    - test downgrading all unnecessary 'int's to uint8_t has worked
-    - build 'angular' functions
-    - incorporate palettes
     - add pattern selector control
-    - fix tab/space coding standard inconsistency
     - add serial output debug for potentiometers and microphone
-    - try using keyboard input to change pattern
 */
 
 #include "FastLED.h"
@@ -28,8 +23,8 @@
 
 #define BRIGHTNESS  255
 #define FRAMES_PER_SECOND  120 //test
-#define RAINBOW_PHASE  7
-#define PATTERN_CHANGE_PERIOD_SECONDS  10
+#define RAINBOW_PHASE  7 //probably good, but test
+#define PATTERN_CHANGE_PERIOD_SECONDS  10 //increase for production
 
 // Installation dimensions
 #define PIXELS_PER_STRIP  75
@@ -46,28 +41,28 @@ CRGB leds[NUMBER_OF_BEAMS][PIXELS_PER_BEAM];
 
 // Required initial setup method
 void setup() {
-  delay(1000);
+    delay(1000);
 
-  // This cannot be iterated due to the addLeds function requiring constants as args.
-  FastLED.addLeds<CHIPSET, 0, COLOR_ORDER>(leds[0],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
-  FastLED.addLeds<CHIPSET, 1, COLOR_ORDER>(leds[1],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
-  FastLED.addLeds<CHIPSET, 2, COLOR_ORDER>(leds[2],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
-  FastLED.addLeds<CHIPSET, 3, COLOR_ORDER>(leds[3],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
-  FastLED.addLeds<CHIPSET, 4, COLOR_ORDER>(leds[4],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
-  FastLED.addLeds<CHIPSET, 5, COLOR_ORDER>(leds[5],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
-  FastLED.addLeds<CHIPSET, 6, COLOR_ORDER>(leds[6],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
-  FastLED.addLeds<CHIPSET, 7, COLOR_ORDER>(leds[7],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
-  FastLED.addLeds<CHIPSET, 8, COLOR_ORDER>(leds[8],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
-  FastLED.addLeds<CHIPSET, 9, COLOR_ORDER>(leds[9],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
-  FastLED.addLeds<CHIPSET, 10, COLOR_ORDER>(leds[10],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
-  FastLED.addLeds<CHIPSET, 11, COLOR_ORDER>(leds[11],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
-  FastLED.addLeds<CHIPSET, 12, COLOR_ORDER>(leds[12],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
-  FastLED.addLeds<CHIPSET, 13, COLOR_ORDER>(leds[13],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
-  FastLED.addLeds<CHIPSET, 14, COLOR_ORDER>(leds[14],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
-  FastLED.addLeds<CHIPSET, 15, COLOR_ORDER>(leds[15],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
-  FastLED.addLeds<CHIPSET, 16, COLOR_ORDER>(leds[16],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
+    // This cannot be iterated due to the addLeds function requiring constants as args.
+    FastLED.addLeds<CHIPSET, 0, COLOR_ORDER>(leds[0],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
+    FastLED.addLeds<CHIPSET, 1, COLOR_ORDER>(leds[1],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
+    FastLED.addLeds<CHIPSET, 2, COLOR_ORDER>(leds[2],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
+    FastLED.addLeds<CHIPSET, 3, COLOR_ORDER>(leds[3],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
+    FastLED.addLeds<CHIPSET, 4, COLOR_ORDER>(leds[4],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
+    FastLED.addLeds<CHIPSET, 5, COLOR_ORDER>(leds[5],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
+    FastLED.addLeds<CHIPSET, 6, COLOR_ORDER>(leds[6],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
+    FastLED.addLeds<CHIPSET, 7, COLOR_ORDER>(leds[7],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
+    FastLED.addLeds<CHIPSET, 8, COLOR_ORDER>(leds[8],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
+    FastLED.addLeds<CHIPSET, 9, COLOR_ORDER>(leds[9],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
+    FastLED.addLeds<CHIPSET, 10, COLOR_ORDER>(leds[10],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
+    FastLED.addLeds<CHIPSET, 11, COLOR_ORDER>(leds[11],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
+    FastLED.addLeds<CHIPSET, 12, COLOR_ORDER>(leds[12],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
+    FastLED.addLeds<CHIPSET, 13, COLOR_ORDER>(leds[13],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
+    FastLED.addLeds<CHIPSET, 14, COLOR_ORDER>(leds[14],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
+    FastLED.addLeds<CHIPSET, 15, COLOR_ORDER>(leds[15],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
+    FastLED.addLeds<CHIPSET, 16, COLOR_ORDER>(leds[16],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
 
-  FastLED.setBrightness(BRIGHTNESS);
+    FastLED.setBrightness(BRIGHTNESS);
 }
 
 // List of patterns to cycle through.  Each is defined as a separate function below.
@@ -79,6 +74,8 @@ uint8_t gHue = 0; // Rotating "base color" used by many of the patterns
 
 // Required main loop
 void loop() {
+    FastLED.setBrightness(BRIGHTNESS);
+
     // Modulate brightness based on potentiometer value, if this contol is enabled
     if (BRIGHTNESS_POTENTIOMETER_ON) {
         int brightnessPotentiometerValue = analogRead(BRIGHTNESS_POTENTIOMETER_PIN);
@@ -94,25 +91,25 @@ void loop() {
         FastLED.setBrightness(newBrightness);
     }
 
-  // Call the current pattern function once, updating the 'leds' array
-  gPatterns[gCurrentPatternNumber]();
+    // Call the current pattern function once, updating the 'leds' array
+    gPatterns[gCurrentPatternNumber]();
 
-  // send the 'leds' array out to the actual LED strip
-  FastLED.show();
-  // insert a delay to keep the framerate modest
-  FastLED.delay(1000/FRAMES_PER_SECOND);
+    // send the 'leds' array out to the actual LED strip
+    FastLED.show();
+    // insert a delay to keep the framerate modest
+    FastLED.delay(1000/FRAMES_PER_SECOND);
 
-  // do some periodic updates
-  EVERY_N_MILLISECONDS(20) { gHue++; } // slowly cycle the "base color" through the rainbow
-  EVERY_N_SECONDS(PATTERN_CHANGE_PERIOD_SECONDS) { nextPattern(); } // change patterns periodically
+    // do some periodic updates
+    EVERY_N_MILLISECONDS(20) { gHue++; } // slowly cycle the "base color" through the rainbow
+    EVERY_N_SECONDS(PATTERN_CHANGE_PERIOD_SECONDS) { nextPattern(); } // change patterns periodically
 }
 
 // UTILITY FUNCTIONS
 #define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))
 
 void nextPattern() {
-  // add one to the current pattern number, and wrap around at the end
-  gCurrentPatternNumber = (gCurrentPatternNumber + 1) % ARRAY_SIZE( gPatterns);
+    // add one to the current pattern number, and wrap around at the end
+    gCurrentPatternNumber = (gCurrentPatternNumber + 1) % ARRAY_SIZE( gPatterns);
 }
 
 void copyFirstStripToSecond(uint8_t beamId) {
@@ -133,7 +130,7 @@ void copyBeamToAllBeams(uint8_t beamId) {
 
     for (uint8_t i = 0; i < NUMBER_OF_BEAMS; i++) {
         if (i != beamId) {
-            memmove(&leds[i], &leds[beamId], 10 * sizeof(CRGB));
+            memmove(&leds[i], &leds[beamId], PIXELS_PER_BEAM * sizeof(CRGB));
         }
     }
 }
@@ -146,16 +143,16 @@ void copyFirstStripToAllBeams(uint8_t beamId) {
 // ANIMATION FUNCTIONS
 void rainbow() {
     uint8_t firstBeam = 0;
-
-  // FastLED's built-in rainbow generator on the first strip of each beam
-  fill_rainbow(leds[firstBeam], PIXELS_PER_STRIP, gHue, RAINBOW_PHASE);
-  copyFirstStripToAllBeams(firstBeam);
+    FastLED.clear();
+    // FastLED's built-in rainbow generator on the first strip of each beam
+    fill_rainbow(leds[firstBeam], PIXELS_PER_STRIP, gHue, RAINBOW_PHASE);
+    copyFirstStripToAllBeams(firstBeam);
 }
 
 void rainbowWithGlitter() {
-  // built-in FastLED rainbow, plus some random sparkly glitter
-  rainbow();
-  addGlitter(80);
+    // built-in FastLED rainbow, plus some random sparkly glitter
+    rainbow();
+    addGlitter(80);
 }
 
 void glitterOnly() {
@@ -173,47 +170,47 @@ void addGlitter(fract8 chanceOfGlitter) {
 
 void confetti() {
     uint8_t firstBeam = 0;
-  // random colored speckles that blink in and fade smoothly
-  fadeToBlackBy(leds[firstBeam], PIXELS_PER_BEAM, 10);
-  uint8_t pos = random16(PIXELS_PER_BEAM);
-  leds[firstBeam][pos] += CHSV(gHue + random8(64), 200, 255);
-  copyBeamToAllBeams(firstBeam);
+    // random colored speckles that blink in and fade smoothly
+    fadeToBlackBy(leds[firstBeam], PIXELS_PER_BEAM, 10);
+    uint8_t pos = random16(PIXELS_PER_BEAM);
+    leds[firstBeam][pos] += CHSV(gHue + random8(64), 200, 255);
+    copyBeamToAllBeams(firstBeam);
 }
 
 void sinelon() {
     uint8_t firstBeam = 0;
-  // a colored dot sweeping back and forth, with fading trails
-  fadeToBlackBy(leds[firstBeam], PIXELS_PER_STRIP, 20);
-  uint8_t pos = beatsin16(13, 0, PIXELS_PER_STRIP);
-  leds[firstBeam][pos] += CHSV(gHue, 255, 192);
-  copyFirstStripToAllBeams(firstBeam);
+    // a colored dot sweeping back and forth, with fading trails
+    fadeToBlackBy(leds[firstBeam], PIXELS_PER_STRIP, 20);
+    uint8_t pos = beatsin16(13, 0, PIXELS_PER_STRIP);
+    leds[firstBeam][pos] += CHSV(gHue, 255, 192);
+    copyFirstStripToAllBeams(firstBeam);
 }
 
 void bpm() {
-  // colored stripes pulsing at a defined Beats-Per-Minute (BPM)
-  uint8_t BeatsPerMinute = 62;
+    // colored stripes pulsing at a defined Beats-Per-Minute (BPM)
+    uint8_t BeatsPerMinute = 62;
 
-  CRGBPalette16 palette = PartyColors_p;
+    CRGBPalette16 palette = PartyColors_p;
 
-  uint8_t beat = beatsin8(BeatsPerMinute, 64, 255);
+    uint8_t beat = beatsin8(BeatsPerMinute, 64, 255);
 
-  uint8_t firstBeam = 0;
-  for (uint8_t i = 0; i < PIXELS_PER_STRIP; i++) { //9948
+    uint8_t firstBeam = 0;
+    for (uint8_t i = 0; i < PIXELS_PER_STRIP; i++) { //9948
     leds[firstBeam][i] = ColorFromPalette(palette, gHue+(i*2), beat-gHue+(i*10));
-  }
-  copyFirstStripToAllBeams(firstBeam);
+    }
+    copyFirstStripToAllBeams(firstBeam);
 }
 
 void juggle() {
-  // eight colored dots, weaving in and out of sync with each other
-  uint8_t firstBeam = 0;
-  fadeToBlackBy(leds[firstBeam], PIXELS_PER_STRIP, 20);
-  byte dothue = 0;
-  for (uint8_t i = 0; i < 8; i++) {
+    // eight colored dots, weaving in and out of sync with each other
+    uint8_t firstBeam = 0;
+    fadeToBlackBy(leds[firstBeam], PIXELS_PER_STRIP, 20);
+    byte dothue = 0;
+    for (uint8_t i = 0; i < 8; i++) {
     leds[firstBeam][beatsin16(i+7 , 0, PIXELS_PER_STRIP)] |= CHSV(dothue, 200, 255);
     dothue += 32;
-  }
-  copyFirstStripToAllBeams(firstBeam);
+    }
+    copyFirstStripToAllBeams(firstBeam);
 }
 
 void fillSolidRed() {
