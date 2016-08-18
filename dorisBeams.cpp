@@ -144,6 +144,7 @@ void copyFirstStripToAllBeams(uint8_t beamId) {
 void rainbow() {
     uint8_t firstBeam = 0;
     FastLED.clear();
+
     // FastLED's built-in rainbow generator on the first strip of each beam
     fill_rainbow(leds[firstBeam], PIXELS_PER_STRIP, gHue, RAINBOW_PHASE);
     copyFirstStripToAllBeams(firstBeam);
