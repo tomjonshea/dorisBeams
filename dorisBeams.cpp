@@ -9,20 +9,16 @@
     - add serial output debug for potentiometers and microphone
 */
 
-/* TO COMPILE:
-    - FastLED instantiation cannot use variables such as i
-*/
-
 #include "FastLED.h"
 
 // Options
 #define BRIGHTNESS_POTENTIOMETER_ON 0
 #define BRIGHTNESS_POTENTIOMETER_PIN 18
-#define BRIGHTNESS_POTENTIOMETER_MAX 1023
+#define BRIGHTNESS_POTENTIOMETER_MAX 1023 //test
 
 #define PATTERN_POTENTIOMETER_ON 0
 #define PATTERN_POTENTIOMETER_PIN  19
-#define PATTERN_POTENTIOMETER_MAX 1023
+#define PATTERN_POTENTIOMETER_MAX 1023 //test
 
 #define MICROPHONE_ON  0
 #define MICROPHONE_PIN  20
