@@ -1,11 +1,11 @@
 // Animations for the D.O.R.I.S. Burning Man art car, 2016
 
 /* TODO:
-    - test downgrading all unnecessary 'uint8_t's to uintx_t has worked
-    - build circular functions
+    - test downgrading all unnecessary 'int's to uint8_t has worked
+    - build 'angular' functions
     - incorporate palettes
     - add pattern selector control
-    - fix tab/space conversion standard
+    - fix tab/space coding standard inconsistency
     - add serial output debug for potentiometers and microphone
 */
 
@@ -26,7 +26,7 @@
 #define MICROPHONE_THRESHOLD  900 //test
 
 #define BRIGHTNESS  255
-#define FRAMES_PER_SECOND  120
+#define FRAMES_PER_SECOND  120 //test
 #define RAINBOW_PHASE  7
 #define PATTERN_CHANGE_PERIOD_SECONDS  10
 
@@ -47,6 +47,7 @@ CRGB leds[NUMBER_OF_BEAMS][PIXELS_PER_BEAM];
 void setup() {
   delay(1000);
 
+  // This cannot be iterated due to the addLeds function requiring constants as args.
   FastLED.addLeds<CHIPSET, 0, COLOR_ORDER>(leds[0],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
   FastLED.addLeds<CHIPSET, 1, COLOR_ORDER>(leds[1],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
   FastLED.addLeds<CHIPSET, 2, COLOR_ORDER>(leds[2],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
@@ -75,6 +76,7 @@ SimplePatternList gPatterns = { testSweeper, moodLighting, beamMeUpGreen, circul
 uint8_t gCurrentPatternNumber = 0; // Index number of which pattern is current
 uint8_t gHue = 0; // Rotating "base color" used by many of the patterns
 
+// Required main loop
 void loop()
 {
     // Modulate brightness based on potentiometer value, if this contol is enabled
