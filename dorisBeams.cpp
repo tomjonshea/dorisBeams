@@ -11,10 +11,15 @@
 #define PATTERN_POTENTIOMETER_PIN  19
 #define PATTERN_POTENTIOMETER_MAX 1023
 
+// #define MICROPHONE_ON  0
+// #define MICROPHONE_PIN  20
+// #define MICROPHONE_MAX  1023 //test
+// #define MICROPHONE_THRESHOLD  900 //test
+
 #define BRIGHTNESS  255
 #define FRAMES_PER_SECOND  120 //test
 #define RAINBOW_PHASE  7 //probably good, but test
-#define PATTERN_CHANGE_PERIOD_SECONDS  90 //increase for production
+#define PATTERN_CHANGE_PERIOD_SECONDS  90
 
 // Installation dimensions
 #define PIXELS_PER_STRIP  75
