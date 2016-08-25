@@ -1,30 +1,20 @@
 // Animations for the D.O.R.I.S. Burning Man art car, 2016
 
-/* TODO:
-    - add pattern selector control
-    - add serial output debug for potentiometers and microphone
-*/
-
 #include "FastLED.h"
 
 // Options
-#define BRIGHTNESS_POTENTIOMETER_ON 0
+#define BRIGHTNESS_POTENTIOMETER_ON 1
 #define BRIGHTNESS_POTENTIOMETER_PIN 18
-#define BRIGHTNESS_POTENTIOMETER_MAX 1023 //test
+#define BRIGHTNESS_POTENTIOMETER_MAX 1023
 
-#define PATTERN_POTENTIOMETER_ON 0
+#define PATTERN_POTENTIOMETER_ON 1
 #define PATTERN_POTENTIOMETER_PIN  19
-#define PATTERN_POTENTIOMETER_MAX 1023 //test
-
-#define MICROPHONE_ON  0
-#define MICROPHONE_PIN  20
-#define MICROPHONE_MAX  1023 //test
-#define MICROPHONE_THRESHOLD  900 //test
+#define PATTERN_POTENTIOMETER_MAX 1023
 
 #define BRIGHTNESS  255
 #define FRAMES_PER_SECOND  120 //test
 #define RAINBOW_PHASE  7 //probably good, but test
-#define PATTERN_CHANGE_PERIOD_SECONDS  10 //increase for production
+#define PATTERN_CHANGE_PERIOD_SECONDS  90 //increase for production
 
 // Installation dimensions
 #define PIXELS_PER_STRIP  75
@@ -67,7 +57,7 @@ void setup() {
 
 // List of patterns to cycle through.  Each is defined as a separate function below.
 typedef void (*SimplePatternList[])();
-SimplePatternList gPatterns = { testSweeper, moodLighting, beamMeUpGreen, beamMeDownOrange, spiralMeUpBlue, spiralMeDownYellow, circularRainbow, rainbow, rainbowWithGlitter, glitterOnly, confetti, sinelon, juggle, bpm };
+SimplePatternList gPatterns = { testSweeper, juggle, circularRainbow, sinelon, rainbow, rainbowWithGlitter, glitterOnly, confetti, bpm };
 
 uint8_t gCurrentPatternNumber = 0; // Index number of which pattern is current
 uint8_t gHue = 0; // Rotating "base color" used by many of the patterns
@@ -79,20 +69,33 @@ void loop() {
     // Modulate brightness based on potentiometer value, if this contol is enabled
     if (BRIGHTNESS_POTENTIOMETER_ON) {
         int brightnessPotentiometerValue = analogRead(BRIGHTNESS_POTENTIOMETER_PIN);
-        uint8_t newBrightness = map(brightnessPotentiometerValue, 0, BRIGHTNESS_POTENTIOMETER_MAX, 0, 255);
+        uint8_t newBrightness = map(brightnessPotentiometerValue, 0, BRIGHTNESS_POTENTIOMETER_MAX, 255, 0);
         FastLED.setBrightness(newBrightness);
+    }
+
+    // Swap between mood lighting and disco patterns
+    if (PATTERN_POTENTIOMETER_ON) {
+        int patternPotentiometerValue = analogRead(PATTERN_POTENTIOMETER_PIN);
+        uint8_t patternSelector = map(patternPotentiometerValue, 0, PATTERN_POTENTIOMETER_MAX, 300, 0);
+        if (patternSelector > 150) {
+            gPatterns[gCurrentPatternNumber]();
+        } else {
+            moodLighting();
+        }
+    } else {
+        gPatterns[gCurrentPatternNumber]();
     }
 
     // Modulate brightness based on microphone value, if this contol is enabled
     // Alternatively this could be set up to be a binary on/off based on the microphone exceeding a threshold value
-    if (MICROPHONE_ON) {
-        int microphoneValue = analogRead(MICROPHONE_PIN);
-        uint8_t newBrightness = map(microphoneValue, 0, MICROPHONE_MAX, 0, 255);
-        FastLED.setBrightness(newBrightness);
-    }
+    // if (MICROPHONE_ON) {
+    //     int microphoneValue = analogRead(MICROPHONE_PIN);
+    //     uint8_t newBrightness = map(microphoneValue, 0, MICROPHONE_MAX, 0, 255);
+    //     FastLED.setBrightness(newBrightness);
+    // }
 
     // Call the current pattern function once, updating the 'leds' array
-    gPatterns[gCurrentPatternNumber]();
+    //gPatterns[gCurrentPatternNumber]();
 
     // send the 'leds' array out to the actual LED strip
     FastLED.show();
@@ -114,7 +117,7 @@ void nextPattern() {
 
 void copyFirstStripToSecond(uint8_t beamId) {
     for (uint8_t i = 0; i < PIXELS_PER_STRIP; i++) {
-        leds[beamId][PIXELS_PER_BEAM - i] = leds[beamId][i];
+        leds[beamId][PIXELS_PER_BEAM - i - 1] = leds[beamId][i];
     }
 }
 
@@ -239,7 +242,7 @@ void moodLighting() {
     for (uint8_t i = 0; i < NUMBER_OF_BEAMS; i++) {
         fill_solid(leds[i], PIXELS_PER_BEAM, tungsten);
     }
-    FastLED.setBrightness(64);
+    FastLED.setBrightness(64); //migth not be necessary
 }
 
 void testSweeper() {
@@ -266,98 +269,98 @@ void testSweeper() {
     }
 }
 
-void beamMeUp(CRGB warpColour, uint8_t warpRings) {
-    FastLED.clear();
-    uint8_t ringModulator = warpRings/PIXELS_PER_STRIP;
-    uint8_t firstBeam = 0;
-    uint8_t ringHeight = map(gHue, 0, 255, 0, PIXELS_PER_STRIP);
-    for (uint8_t i = 0; i < PIXELS_PER_STRIP + 1; i++) {
-        if (i >= ringHeight && (i - ringHeight) % ringModulator == 0) {
-            if (i < PIXELS_PER_STRIP) {
-                leds[firstBeam][i] = warpColour;
-            }
-            if (i >= 1) {
-                leds[firstBeam][i - 1] = warpColour;
-            }
-        }
-    }
-    copyFirstStripToAllBeams(firstBeam);
-}
-
-void beamMeDown(CRGB warpColour, uint8_t warpRings) {
-    FastLED.clear();
-    uint8_t ringModulator = warpRings/PIXELS_PER_STRIP;
-    uint8_t firstBeam = 0;
-    uint8_t ringHeight = map(gHue, 0, 255, 0, PIXELS_PER_STRIP);
-    for (uint8_t i = 0; i < PIXELS_PER_STRIP + 1; i++) {
-        if (i >= ringHeight && (i - ringHeight) % ringModulator == 0) {
-            if (i < PIXELS_PER_STRIP) {
-                leds[firstBeam][PIXELS_PER_STRIP - i] = warpColour;
-            }
-            if (i > 1) {
-                leds[firstBeam][PIXELS_PER_STRIP - i + 1] = warpColour;
-            }
-        }
-    }
-    copyFirstStripToAllBeams(firstBeam);
-}
-
-void beamMeUpGreen() {
-    beamMeUp(CRGB::Green, 3);
-}
-
-void beamMeDownOrange() {
-    beamMeUp(CRGB::Orange, 5);
-}
-
-// Dubious math here - test thoroughly
-void spiralMeUp(CRGB warpColour, uint8_t warpRings) {
-    FastLED.clear();
-    uint8_t ringModulator = warpRings/PIXELS_PER_STRIP;
-    uint8_t ringHeight = map(gHue, 0, 255, 0, PIXELS_PER_STRIP);
-    for (uint8_t j = 0; j < NUMBER_OF_BEAMS; j++) {
-        for (uint8_t i = 0; i < PIXELS_PER_STRIP + 1; i++) {
-            uint8_t position = i + j;
-            if (position >= ringHeight && ((position - ringHeight) % ringModulator == 0 || (position - ringHeight - NUMBER_OF_BEAMS) % ringModulator == 0)) {
-                if (position < PIXELS_PER_STRIP) {
-                    leds[j][position] = warpColour;
-                }
-                if (position >= 1) {
-                    leds[j][position - 1] = warpColour;
-                }
-            }
-        }
-        copyFirstStripToSecond(j);
-    }
-}
-
-void spiralMeDown(CRGB warpColour, uint8_t warpRings) {
-    FastLED.clear();
-    uint8_t ringModulator = warpRings/PIXELS_PER_STRIP;
-    uint8_t ringHeight = map(gHue, 0, 255, 0, PIXELS_PER_STRIP);
-    for (uint8_t j = 0; j < NUMBER_OF_BEAMS; j++) {
-        for (uint8_t i = 0; i < PIXELS_PER_STRIP + 1; i++) {
-            uint8_t position = i + j;
-            if (position >= ringHeight && ((position - ringHeight) % ringModulator == 0 || (position - ringHeight - NUMBER_OF_BEAMS) % ringModulator == 0)) {
-                if (position < PIXELS_PER_STRIP) {
-                    leds[j][PIXELS_PER_STRIP - position] = warpColour;
-                }
-                if (position > 1) {
-                    leds[j][PIXELS_PER_STRIP - position - 1] = warpColour;
-                }
-            }
-        }
-        copyFirstStripToSecond(j);
-    }
-}
-
-void spiralMeUpBlue() {
-    spiralMeUp(CRGB::Blue, 3);
-}
-
-void spiralMeDownYellow() {
-    spiralMeDown(CRGB::Yellow, 10);
-}
+// void beamMeUp(CRGB warpColour, uint8_t warpRings) {
+//     FastLED.clear();
+//     uint8_t ringModulator = warpRings/PIXELS_PER_STRIP;
+//     uint8_t firstBeam = 0;
+//     uint8_t ringHeight = map(gHue, 0, 255, 0, PIXELS_PER_STRIP);
+//     for (uint8_t i = 0; i < PIXELS_PER_STRIP + 1; i++) {
+//         if (i >= ringHeight && (i - ringHeight) % ringModulator == 0) {
+//             if (i < PIXELS_PER_STRIP) {
+//                 leds[firstBeam][i] = warpColour;
+//             }
+//             if (i >= 1) {
+//                 leds[firstBeam][i - 1] = warpColour;
+//             }
+//         }
+//     }
+//     copyFirstStripToAllBeams(firstBeam);
+// }
+//
+// void beamMeDown(CRGB warpColour, uint8_t warpRings) {
+//     FastLED.clear();
+//     uint8_t ringModulator = warpRings/PIXELS_PER_STRIP;
+//     uint8_t firstBeam = 0;
+//     uint8_t ringHeight = map(gHue, 0, 255, 0, PIXELS_PER_STRIP);
+//     for (uint8_t i = 0; i < PIXELS_PER_STRIP + 1; i++) {
+//         if (i >= ringHeight && (i - ringHeight) % ringModulator == 0) {
+//             if (i < PIXELS_PER_STRIP) {
+//                 leds[firstBeam][PIXELS_PER_STRIP - i] = warpColour;
+//             }
+//             if (i > 1) {
+//                 leds[firstBeam][PIXELS_PER_STRIP - i + 1] = warpColour;
+//             }
+//         }
+//     }
+//     copyFirstStripToAllBeams(firstBeam);
+// }
+//
+// void beamMeUpGreen() {
+//     beamMeUp(CRGB::Green, 3);
+// }
+//
+// void beamMeDownOrange() {
+//     beamMeUp(CRGB::Orange, 5);
+// }
+//
+// // Dubious math here - test thoroughly
+// void spiralMeUp(CRGB warpColour, uint8_t warpRings) {
+//     FastLED.clear();
+//     uint8_t ringModulator = warpRings/PIXELS_PER_STRIP;
+//     uint8_t ringHeight = map(gHue, 0, 255, 0, PIXELS_PER_STRIP);
+//     for (uint8_t j = 0; j < NUMBER_OF_BEAMS; j++) {
+//         for (uint8_t i = 0; i < PIXELS_PER_STRIP + 1; i++) {
+//             uint8_t position = i + j;
+//             if (position >= ringHeight && ((position - ringHeight) % ringModulator == 0 || (position - ringHeight - NUMBER_OF_BEAMS) % ringModulator == 0)) {
+//                 if (position < PIXELS_PER_STRIP) {
+//                     leds[j][position] = warpColour;
+//                 }
+//                 if (position >= 1) {
+//                     leds[j][position - 1] = warpColour;
+//                 }
+//             }
+//         }
+//         copyFirstStripToSecond(j);
+//     }
+// }
+//
+// void spiralMeDown(CRGB warpColour, uint8_t warpRings) {
+//     FastLED.clear();
+//     uint8_t ringModulator = warpRings/PIXELS_PER_STRIP;
+//     uint8_t ringHeight = map(gHue, 0, 255, 0, PIXELS_PER_STRIP);
+//     for (uint8_t j = 0; j < NUMBER_OF_BEAMS; j++) {
+//         for (uint8_t i = 0; i < PIXELS_PER_STRIP + 1; i++) {
+//             uint8_t position = i + j;
+//             if (position >= ringHeight && ((position - ringHeight) % ringModulator == 0 || (position - ringHeight - NUMBER_OF_BEAMS) % ringModulator == 0)) {
+//                 if (position < PIXELS_PER_STRIP) {
+//                     leds[j][PIXELS_PER_STRIP - position] = warpColour;
+//                 }
+//                 if (position > 1) {
+//                     leds[j][PIXELS_PER_STRIP - position - 1] = warpColour;
+//                 }
+//             }
+//         }
+//         copyFirstStripToSecond(j);
+//     }
+// }
+//
+// void spiralMeUpBlue() {
+//     spiralMeUp(CRGB::Blue, 3);
+// }
+//
+// void spiralMeDownYellow() {
+//     spiralMeDown(CRGB::Yellow, 10);
+// }
 
 void circularRainbow() {
     CRGB rainbowArray[NUMBER_OF_BEAMS];
