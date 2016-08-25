@@ -52,10 +52,10 @@ void setup() {
     FastLED.addLeds<CHIPSET, 10, COLOR_ORDER>(leds[10],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
     FastLED.addLeds<CHIPSET, 11, COLOR_ORDER>(leds[11],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
     FastLED.addLeds<CHIPSET, 12, COLOR_ORDER>(leds[12],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
-    FastLED.addLeds<CHIPSET, 13, COLOR_ORDER>(leds[13],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
     FastLED.addLeds<CHIPSET, 14, COLOR_ORDER>(leds[14],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
     FastLED.addLeds<CHIPSET, 15, COLOR_ORDER>(leds[15],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
     FastLED.addLeds<CHIPSET, 16, COLOR_ORDER>(leds[16],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
+    FastLED.addLeds<CHIPSET, 17, COLOR_ORDER>(leds[17],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
 
     FastLED.setBrightness(BRIGHTNESS);
 }
@@ -74,15 +74,15 @@ void loop() {
     // Modulate brightness based on potentiometer value, if this contol is enabled
     if (BRIGHTNESS_POTENTIOMETER_ON) {
         int brightnessPotentiometerValue = analogRead(BRIGHTNESS_POTENTIOMETER_PIN);
-        uint8_t newBrightness = map(brightnessPotentiometerValue, 0, BRIGHTNESS_POTENTIOMETER_MAX, 255, 0);
+        uint8_t newBrightness = map(brightnessPotentiometerValue, 0, BRIGHTNESS_POTENTIOMETER_MAX, 0, 255);
         FastLED.setBrightness(newBrightness);
     }
 
     // Swap between mood lighting and disco patterns
     if (PATTERN_POTENTIOMETER_ON) {
         int patternPotentiometerValue = analogRead(PATTERN_POTENTIOMETER_PIN);
-        uint8_t patternSelector = map(patternPotentiometerValue, 0, PATTERN_POTENTIOMETER_MAX, 300, 0);
-        if (patternSelector > 150) {
+        uint8_t patternSelector = map(patternPotentiometerValue, 0, PATTERN_POTENTIOMETER_MAX, 0, 255);
+        if (patternSelector > 128) {
             gPatterns[gCurrentPatternNumber]();
         } else {
             moodLighting();
