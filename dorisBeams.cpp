@@ -3,11 +3,11 @@
 #include "FastLED.h"
 
 // Options
-#define BRIGHTNESS_POTENTIOMETER_ON 1
+#define BRIGHTNESS_POTENTIOMETER_ON 0
 #define BRIGHTNESS_POTENTIOMETER_PIN 18
 #define BRIGHTNESS_POTENTIOMETER_MAX 1023
 
-#define PATTERN_POTENTIOMETER_ON 1
+#define PATTERN_POTENTIOMETER_ON 0
 #define PATTERN_POTENTIOMETER_PIN  19
 #define PATTERN_POTENTIOMETER_MAX 1023
 
@@ -52,17 +52,17 @@ void setup() {
     FastLED.addLeds<CHIPSET, 10, COLOR_ORDER>(leds[10],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
     FastLED.addLeds<CHIPSET, 11, COLOR_ORDER>(leds[11],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
     FastLED.addLeds<CHIPSET, 12, COLOR_ORDER>(leds[12],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
-    FastLED.addLeds<CHIPSET, 14, COLOR_ORDER>(leds[14],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
-    FastLED.addLeds<CHIPSET, 15, COLOR_ORDER>(leds[15],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
-    FastLED.addLeds<CHIPSET, 16, COLOR_ORDER>(leds[16],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
-    FastLED.addLeds<CHIPSET, 17, COLOR_ORDER>(leds[17],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
+    FastLED.addLeds<CHIPSET, 14, COLOR_ORDER>(leds[13],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
+    FastLED.addLeds<CHIPSET, 15, COLOR_ORDER>(leds[14],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
+    FastLED.addLeds<CHIPSET, 16, COLOR_ORDER>(leds[15],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
+    FastLED.addLeds<CHIPSET, 17, COLOR_ORDER>(leds[16],  PIXELS_PER_BEAM).setCorrection(TypicalLEDStrip);
 
     FastLED.setBrightness(BRIGHTNESS);
 }
 
 // List of patterns to cycle through.  Each is defined as a separate function below.
 typedef void (*SimplePatternList[])();
-SimplePatternList gPatterns = { testSweeper, juggle, circularRainbow, sinelon, rainbow, rainbowWithGlitter, glitterOnly, confetti, bpm };
+SimplePatternList gPatterns = { circularRainbow, juggle, sinelon, rainbow, rainbowWithGlitter, glitterOnly, confetti, bpm };
 
 uint8_t gCurrentPatternNumber = 0; // Index number of which pattern is current
 uint8_t gHue = 0; // Rotating "base color" used by many of the patterns
